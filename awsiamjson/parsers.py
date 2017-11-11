@@ -1,7 +1,8 @@
 from .logger import *
 import requests
 import re
-from lxml import html
+from lxml import html, etree
+import lxml.html, lxml.html.clean
 
 _logger = get_logger(__name__)
 
@@ -16,14 +17,15 @@ def add_services(input_dict):
     services = {}
     for cur_service in aws_services:
         short_name = re.search(r"list_(.+).html", cur_service.attrib['href']).group(1).lower()
-        if short_name != "s3":
-            continue
+        #if short_name != "s3":
+            #continue
         if cur_service.text not in services:
             services[short_name] = {}
             services[short_name]['Name'] = cur_service.text
             services[short_name]['URL'] = base_url + cur_service.attrib['href']
     input_dict['services'] = services
     return input_dict
+
 
 def add_actions_and_context_keys(input_dict):
     for name, service in input_dict['services'].items():
@@ -47,4 +49,35 @@ def add_actions_and_context_keys(input_dict):
                     service['Actions'] = {}
                 service['Actions'][inner_link.text] = {}
                 service['Actions'][inner_link.text]['URL'] = inner_link.attrib['href']
+    return input_dict
+
+
+def add_api_descriptions(input_dict):
+    for _, service in input_dict['services'].items():
+        _logger.info("Working on Service: {0}".format(service['Name']))
+        # TODO: There is still a bug here with API Actions without links
+        if 'Actions' not in service:
+            continue
+        for action_name, action in service['Actions'].items():
+            _logger.info("Working on Action: {0}".format(action_name))
+            if len(action['URL']) == 0:
+                # Documentation links are sometimes blank
+                action['Title'] = 'No AWS Documentation'
+                action['Description'] = 'No AWS Documentation'
+                continue
+            page = requests.get(action['URL'])
+            tree = html.fromstring(page.content)
+            title_element = tree.xpath('//h1[@class="topictitle"][1]')
+            if len(title_element) == 0:
+                # Documentation links are sometimes broken failing back to Service API Introduction page
+                action['Title'] = 'No AWS Documentation'
+                action['Description'] = 'No AWS Documentation'
+                continue
+            action['Title'] = title_element[0].text
+            description_element = tree.xpath('//*[@id="main-col-body"]/p[1]')
+            # Remove any tags within this HTML
+            etree.strip_tags(description_element[0], "*")
+            dirty_description = description_element[0].text
+            # Remove redundant whitespace caused by HTML formatting
+            action['Description'] = re.sub('\s+', ' ', dirty_description).strip()
     return input_dict
