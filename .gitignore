@@ -109,5 +109,5 @@ venv.bak/
 # Ignore OS X Files
 .DS_Store
 
-.logs/
-.out/
+logs/
+out/
