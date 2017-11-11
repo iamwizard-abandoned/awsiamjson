@@ -14,7 +14,7 @@ def get_logger(name):
     :param name: The name of the calling class.
     :param level: The logging level to import before the line."""
     logger = logging.getLogger('bjhof.' + name)
-    log_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../logs/')
+    log_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../logs/')
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     logging.config.dictConfig({
