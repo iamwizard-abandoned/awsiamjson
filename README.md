@@ -1,10 +1,19 @@
 # IAM Wizard - Metadata Generator
 
-Description
+Crawls the AWS IAM Documentation pages and generates a easily consumable JSON file describing AWS IAM Actions and
+Conditions.
 
 ## Build Status
 
 Coming soon!
+
+## Usage
+
+Simply run `__main__.py` and and output file `out/awsiam.json` will be produced.
+
+Optionally modify the `output_override.json` file to override specific fields of the output file. This is useful when
+the AWS documentation isn't consistently organized and you wish you manually specify documentation links or more useful
+API descriptions.
 
 ## License
 
