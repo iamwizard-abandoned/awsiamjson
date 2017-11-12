@@ -13,7 +13,7 @@ def get_logger(name):
 
     :param name: The name of the calling class.
     :param level: The logging level to import before the line."""
-    logger = logging.getLogger('bjhof.' + name)
+    logger = logging.getLogger(name)
     log_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../logs/')
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
@@ -36,7 +36,7 @@ def get_logger(name):
                 "level": "DEBUG",
                 "class": "logging.handlers.RotatingFileHandler",
                 "formatter": "standard",
-                "filename": os.path.join(log_dir, "bjhof.simulator.log"),
+                "filename": os.path.join(log_dir, "awsiamjson.log"),
                 "encoding": "utf8",
                 "maxBytes": 1048576,
                 "backupCount": 10

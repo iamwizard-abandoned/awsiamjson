@@ -111,3 +111,4 @@ venv.bak/
 
 logs/
 out/
+good_output.json

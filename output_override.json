@@ -1,0 +1,13 @@
+{
+    "services": {
+        "apigateway": {
+            "Actions": {
+                "apigateway:DELETE": {
+                    "Description": "This is a custom override description.",
+                    "Title": "Custom Title Here!",
+                    "URL": "http://www.github.com/"
+                }
+            }
+        }
+    }
+}
